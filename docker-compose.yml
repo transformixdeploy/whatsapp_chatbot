@@ -8,7 +8,7 @@ services:
     container_name: whatsapp_chatbot_frontend
     restart: always
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - WHATSAPP_TOKEN=${WHATSAPP_TOKEN}
@@ -17,6 +17,7 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - PINECONE_API_KEY=${PINECONE_API_KEY}
       - PINECONE_INDEX=${PINECONE_INDEX}
+      - RAG_SERVICE_URL=http://python_rag:8000
     depends_on:
       - python_rag
 
@@ -27,7 +28,7 @@ services:
     container_name: whatsapp_chatbot_rag
     restart: always
     ports:
-      - "8000:8000"
+      - "8001:8000"
     environment:
       - COHERE_API_KEY=${COHERE_API_KEY}
       - PINECONE_API_KEY=${PINECONE_API_KEY}
