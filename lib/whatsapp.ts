@@ -16,7 +16,12 @@ export async function sendWhatsAppMessage(to: string, body: string) {
         }),
     })
 
+    const responseBody = await response.json()
+
     if (!response.ok) {
-        console.error('Failed to send WhatsApp message', await response.text())
+        console.error('❌ WhatsApp API Error:', JSON.stringify(responseBody, null, 2))
+        throw new Error('Failed to send WhatsApp message')
+    } else {
+        console.log('✅ WhatsApp API Response:', JSON.stringify(responseBody, null, 2))
     }
 }
