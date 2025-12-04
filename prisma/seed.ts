@@ -3,35 +3,24 @@ import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
 async function main() {
-    const chat1 = await prisma.conversation.create({
-        data: {
-            contactPhone: '1234567890',
-            contactName: 'Alice Wonderland',
-            messages: {
-                create: [
-                    { content: 'Hello, I need help with my order.', sender: 'user' },
-                    { content: 'Hi Alice! I can help with that. What is your order number?', sender: 'bot' },
-                    { content: 'It is #12345.', sender: 'user' },
-                ],
+    try {
+        const chat = await prisma.conversation.create({
+            data: {
+                contactPhone: '01207227165',
+                contactName: 'Ahmed',
+                messages: {
+                    create: [
+                        { content: 'Hello, is this the testing bot?', sender: 'user' },
+                        { content: 'Yes Ahmed, I am ready!', sender: 'bot' },
+                    ],
+                },
+                unreadCount: 1,
             },
-            unreadCount: 1,
-        },
-    })
-
-    const chat2 = await prisma.conversation.create({
-        data: {
-            contactPhone: '0987654321',
-            contactName: 'Bob Builder',
-            messages: {
-                create: [
-                    { content: 'Can you build a chatbot?', sender: 'user' },
-                ],
-            },
-            unreadCount: 1,
-        },
-    })
-
-    console.log({ chat1, chat2 })
+        })
+        console.log('Created:', chat)
+    } catch (e) {
+        console.error('Error creating chat (maybe already exists):', e)
+    }
 }
 
 main()
