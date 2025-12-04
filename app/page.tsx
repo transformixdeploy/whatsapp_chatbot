@@ -6,6 +6,7 @@ import { ChatList } from '@/components/chat/ChatList'
 import { ChatWindow } from '@/components/chat/ChatWindow'
 import { NavSidebar } from '@/components/NavSidebar'
 import { CampaignBuilder } from '@/components/campaign/CampaignBuilder'
+import { cn } from '@/lib/utils'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
@@ -21,8 +22,12 @@ export default function Dashboard() {
 
             {activeTab === 'chats' ? (
                 <>
-                    {/* Chat Sidebar */}
-                    <div className="w-80 border-r border-border flex flex-col">
+                    {/* Chat Sidebar (List) */}
+                    <div className={cn(
+                        "flex-col border-r border-border bg-background",
+                        // Mobile: Full width, hidden if chat selected
+                        selectedChatId ? "hidden md:flex md:w-80" : "flex w-full md:w-80"
+                    )}>
                         <div className="p-4 border-b border-border">
                             <h1 className="text-xl font-bold text-accent">
                                 Mermates Chatbot
@@ -35,10 +40,17 @@ export default function Dashboard() {
                         />
                     </div>
 
-                    {/* Main Chat Area */}
-                    <div className="flex-1 flex flex-col">
+                    {/* Main Chat Area (Window) */}
+                    <div className={cn(
+                        "flex-1 flex-col bg-background",
+                        // Mobile: Full width, hidden if NO chat selected
+                        selectedChatId ? "flex w-full" : "hidden md:flex"
+                    )}>
                         {selectedChatId ? (
-                            <ChatWindow chatId={selectedChatId} />
+                            <ChatWindow
+                                chatId={selectedChatId}
+                                onBack={() => setSelectedChatId(null)}
+                            />
                         ) : (
                             <div className="flex-1 flex items-center justify-center text-muted-foreground">
                                 Select a conversation to start chatting
