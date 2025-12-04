@@ -59,9 +59,9 @@ export function CampaignBuilder() {
     }
 
     return (
-        <div className="flex-1 flex h-full overflow-hidden">
+        <div className="flex-1 flex flex-col md:flex-row h-full overflow-hidden pb-16 md:pb-0">
             {/* Editor */}
-            <div className="w-1/2 border-r border-border p-6 overflow-y-auto">
+            <div className="w-full md:w-1/2 border-b md:border-b-0 md:border-r border-border p-6 overflow-y-auto">
                 <h2 className="text-2xl font-bold mb-6 text-accent">Campaign Designer</h2>
 
                 <div className="space-y-6">
@@ -134,7 +134,7 @@ export function CampaignBuilder() {
             </div>
 
             {/* Preview & Send */}
-            <div className="w-1/2 p-6 flex flex-col bg-muted/10">
+            <div className="w-full md:w-1/2 p-6 flex flex-col bg-muted/10 overflow-y-auto md:overflow-visible">
                 <div className="flex-1 overflow-y-auto mb-6">
                     <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
                         <Eye className="w-4 h-4" /> Preview
