@@ -4,6 +4,7 @@ import { Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { MessageBubble } from './MessageBubble'
+import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 
 import { ArrowLeft } from 'lucide-react'
 
@@ -16,13 +17,16 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export function ChatWindow({ chatId, onBack }: ChatWindowProps) {
     const [isAtBottom, setIsAtBottom] = useState(true)
-    const { data: messages, mutate } = useSWR(chatId ? `/api/chats/${chatId}` : null, fetcher, {
+    const { data: chatData, mutate } = useSWR(chatId ? `/api/chats/${chatId}` : null, fetcher, {
         refreshInterval: 1000,
         keepPreviousData: true
     })
     const [inputValue, setInputValue] = useState('')
     const scrollRef = useRef<HTMLDivElement>(null)
     const containerRef = useRef<HTMLDivElement>(null)
+
+    const messages = chatData?.messages || []
+    const conversation = chatData?.conversation
 
     // Check if user is at bottom
     const handleScroll = () => {
@@ -77,12 +81,41 @@ export function ChatWindow({ chatId, onBack }: ChatWindowProps) {
 
     return (
         <div className="flex flex-col h-full min-h-0 overflow-hidden">
+            {/* Desktop Header */}
+            <div className="hidden md:flex items-center gap-3 p-4 border-b border-border bg-card flex-shrink-0">
+                <Avatar>
+                    <AvatarFallback>
+                        {conversation?.contactName?.[0]?.toUpperCase() || conversation?.contactPhone?.[0] || '?'}
+                    </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                    <h2 className="font-semibold text-lg">
+                        {conversation?.contactName || conversation?.contactPhone || 'Unknown'}
+                    </h2>
+                    {conversation?.contactPhone && (
+                        <p className="text-sm text-muted-foreground">{conversation.contactPhone}</p>
+                    )}
+                </div>
+            </div>
+
             {/* Mobile Header */}
-            <div className="md:hidden flex items-center p-4 border-b border-border bg-card flex-shrink-0">
-                <Button variant="ghost" size="icon" onClick={onBack} className="mr-2">
+            <div className="md:hidden flex items-center gap-3 p-4 border-b border-border bg-card flex-shrink-0">
+                <Button variant="ghost" size="icon" onClick={onBack} className="mr-0">
                     <ArrowLeft className="w-5 h-5" />
                 </Button>
-                <span className="font-semibold">Chat</span>
+                <Avatar>
+                    <AvatarFallback>
+                        {conversation?.contactName?.[0]?.toUpperCase() || conversation?.contactPhone?.[0] || '?'}
+                    </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                    <h2 className="font-semibold">
+                        {conversation?.contactName || conversation?.contactPhone || 'Chat'}
+                    </h2>
+                    {conversation?.contactPhone && (
+                        <p className="text-xs text-muted-foreground">{conversation.contactPhone}</p>
+                    )}
+                </div>
             </div>
 
             <div className="flex-1 overflow-hidden min-h-0 flex flex-col relative">
