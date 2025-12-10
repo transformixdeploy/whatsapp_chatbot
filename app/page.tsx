@@ -42,7 +42,7 @@ export default function Dashboard() {
 
                     {/* Main Chat Area (Window) */}
                     <div className={cn(
-                        "flex-1 bg-background pb-16 md:pb-0 min-h-0",
+                        "flex-1 bg-background pb-16 md:pb-0 min-h-0 overflow-hidden",
                         // Mobile: Full width, hidden if NO chat selected
                         selectedChatId ? "flex flex-col w-full" : "hidden md:flex md:flex-col"
                     )}>

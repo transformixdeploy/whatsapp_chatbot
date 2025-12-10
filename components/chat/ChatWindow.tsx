@@ -35,22 +35,27 @@ export function ChatWindow({ chatId, onBack }: ChatWindowProps) {
 
     // Auto-scroll effect
     useEffect(() => {
-        if (scrollRef.current && isAtBottom) {
-            scrollRef.current.scrollIntoView({ behavior: 'smooth' })
+        if (containerRef.current && isAtBottom && messages && messages.length > 0) {
+            requestAnimationFrame(() => {
+                if (containerRef.current) {
+                    containerRef.current.scrollTop = containerRef.current.scrollHeight
+                }
+            })
         }
     }, [messages?.length, messages?.[messages.length - 1]?.id, isAtBottom])
 
-    // Scroll to bottom when chat changes
+    // Scroll to bottom when chat changes or messages load
     useEffect(() => {
         if (containerRef.current && messages && messages.length > 0) {
             setIsAtBottom(true)
-            setTimeout(() => {
-                if (scrollRef.current) {
-                    scrollRef.current.scrollIntoView({ behavior: 'auto' })
+            // Use requestAnimationFrame to ensure DOM is ready
+            requestAnimationFrame(() => {
+                if (containerRef.current && scrollRef.current) {
+                    containerRef.current.scrollTop = containerRef.current.scrollHeight
                 }
-            }, 100)
+            })
         }
-    }, [chatId])
+    }, [chatId, messages?.length])
 
     const handleSend = async () => {
         if (!inputValue.trim()) return
@@ -71,20 +76,20 @@ export function ChatWindow({ chatId, onBack }: ChatWindowProps) {
     }
 
     return (
-        <div className="flex flex-col h-full min-h-0">
+        <div className="flex flex-col h-full min-h-0 overflow-hidden">
             {/* Mobile Header */}
-            <div className="md:hidden flex items-center p-4 border-b border-border bg-card">
+            <div className="md:hidden flex items-center p-4 border-b border-border bg-card flex-shrink-0">
                 <Button variant="ghost" size="icon" onClick={onBack} className="mr-2">
                     <ArrowLeft className="w-5 h-5" />
                 </Button>
                 <span className="font-semibold">Chat</span>
             </div>
 
-            <div className="flex-1 p-4 overflow-hidden min-h-0 flex flex-col">
+            <div className="flex-1 overflow-hidden min-h-0 flex flex-col relative">
                 <div
                     ref={containerRef}
                     onScroll={handleScroll}
-                    className="flex-1 overflow-y-auto pr-4 custom-scrollbar min-h-0"
+                    className="absolute inset-0 overflow-y-auto px-4 py-4 custom-scrollbar"
                 >
                     <div className="flex flex-col gap-4">
                         {messages?.map((msg: any) => (
@@ -94,7 +99,7 @@ export function ChatWindow({ chatId, onBack }: ChatWindowProps) {
                     </div>
                 </div>
             </div>
-            <div className="p-4 border-t border-border bg-background">
+            <div className="p-4 border-t border-border bg-background flex-shrink-0">
                 <form
                     onSubmit={(e) => { e.preventDefault(); handleSend() }}
                     className="flex gap-2"
