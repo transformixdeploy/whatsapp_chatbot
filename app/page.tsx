@@ -24,7 +24,7 @@ export default function Dashboard() {
                 <>
                     {/* Chat Sidebar (List) */}
                     <div className={cn(
-                        "flex-col border-r border-border bg-background pb-16 md:pb-0",
+                        "flex-col border-r border-border bg-background pb-16 md:pb-0 min-h-0",
                         // Mobile: Full width, hidden if chat selected
                         selectedChatId ? "hidden md:flex md:w-80" : "flex w-full md:w-80"
                     )}>
@@ -42,7 +42,7 @@ export default function Dashboard() {
 
                     {/* Main Chat Area (Window) */}
                     <div className={cn(
-                        "flex-1 flex-col bg-background pb-16 md:pb-0",
+                        "flex-1 flex-col bg-background pb-16 md:pb-0 min-h-0",
                         // Mobile: Full width, hidden if NO chat selected
                         selectedChatId ? "flex w-full" : "hidden md:flex"
                     )}>

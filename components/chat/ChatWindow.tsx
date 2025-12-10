@@ -15,21 +15,37 @@ interface ChatWindowProps {
 const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 export function ChatWindow({ chatId, onBack }: ChatWindowProps) {
-    const { data: messages, mutate } = useSWR(chatId ? `/api/chats/${chatId}` : null, fetcher, { refreshInterval: 1000 })
+    const [isAtBottom, setIsAtBottom] = useState(true)
+    const { data: messages, mutate } = useSWR(chatId ? `/api/chats/${chatId}` : null, fetcher, {
+        refreshInterval: 1000,
+        keepPreviousData: true
+    })
     const [inputValue, setInputValue] = useState('')
     const scrollRef = useRef<HTMLDivElement>(null)
+    const containerRef = useRef<HTMLDivElement>(null)
 
+    // Check if user is at bottom
+    const handleScroll = () => {
+        if (!containerRef.current) return
+        const { scrollTop, scrollHeight, clientHeight } = containerRef.current
+        // Consider "at bottom" if within 100px of the bottom
+        const isBottom = scrollHeight - scrollTop - clientHeight < 100
+        setIsAtBottom(isBottom)
+    }
+
+    // Auto-scroll effect
     useEffect(() => {
-        if (scrollRef.current) {
+        if (scrollRef.current && isAtBottom) {
             scrollRef.current.scrollIntoView({ behavior: 'smooth' })
         }
-    }, [messages?.length, messages?.[messages.length - 1]?.id])
+    }, [messages?.length, messages?.[messages.length - 1]?.id, isAtBottom])
 
     const handleSend = async () => {
         if (!inputValue.trim()) return
 
         const content = inputValue
         setInputValue('')
+        setIsAtBottom(true) // Force scroll to bottom on send
 
         // Optimistic update (optional, but good for UX)
         // For now, we'll just wait for the API
@@ -43,7 +59,7 @@ export function ChatWindow({ chatId, onBack }: ChatWindowProps) {
     }
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full min-h-0">
             {/* Mobile Header */}
             <div className="md:hidden flex items-center p-4 border-b border-border bg-card">
                 <Button variant="ghost" size="icon" onClick={onBack} className="mr-2">
@@ -52,8 +68,12 @@ export function ChatWindow({ chatId, onBack }: ChatWindowProps) {
                 <span className="font-semibold">Chat</span>
             </div>
 
-            <div className="flex-1 p-4 overflow-hidden">
-                <div className="h-full overflow-y-auto pr-4 custom-scrollbar">
+            <div className="flex-1 p-4 overflow-hidden min-h-0 flex flex-col">
+                <div
+                    ref={containerRef}
+                    onScroll={handleScroll}
+                    className="h-full overflow-y-auto pr-4 custom-scrollbar"
+                >
                     <div className="flex flex-col gap-4">
                         {messages?.map((msg: any) => (
                             <MessageBubble key={msg.id} message={msg} />
