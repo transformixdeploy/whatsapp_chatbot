@@ -16,7 +16,7 @@ export default function Dashboard() {
     const { data: chats, mutate } = useSWR('/api/chats', fetcher, { refreshInterval: 3000 })
 
     return (
-        <div className="flex h-screen bg-background text-foreground overflow-hidden">
+        <div className="flex h-dvh bg-background text-foreground overflow-hidden">
             {/* Navigation Sidebar */}
             <NavSidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
