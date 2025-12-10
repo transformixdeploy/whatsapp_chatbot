@@ -40,6 +40,18 @@ export function ChatWindow({ chatId, onBack }: ChatWindowProps) {
         }
     }, [messages?.length, messages?.[messages.length - 1]?.id, isAtBottom])
 
+    // Scroll to bottom when chat changes
+    useEffect(() => {
+        if (containerRef.current && messages && messages.length > 0) {
+            setIsAtBottom(true)
+            setTimeout(() => {
+                if (scrollRef.current) {
+                    scrollRef.current.scrollIntoView({ behavior: 'auto' })
+                }
+            }, 100)
+        }
+    }, [chatId])
+
     const handleSend = async () => {
         if (!inputValue.trim()) return
 
@@ -72,7 +84,7 @@ export function ChatWindow({ chatId, onBack }: ChatWindowProps) {
                 <div
                     ref={containerRef}
                     onScroll={handleScroll}
-                    className="h-full overflow-y-auto pr-4 custom-scrollbar"
+                    className="flex-1 overflow-y-auto pr-4 custom-scrollbar min-h-0"
                 >
                     <div className="flex flex-col gap-4">
                         {messages?.map((msg: any) => (
