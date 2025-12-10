@@ -23,7 +23,7 @@ export function ChatWindow({ chatId, onBack }: ChatWindowProps) {
         if (scrollRef.current) {
             scrollRef.current.scrollIntoView({ behavior: 'smooth' })
         }
-    }, [messages])
+    }, [messages?.length, messages?.[messages.length - 1]?.id])
 
     const handleSend = async () => {
         if (!inputValue.trim()) return
